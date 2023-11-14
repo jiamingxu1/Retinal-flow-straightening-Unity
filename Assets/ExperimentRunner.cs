@@ -25,7 +25,8 @@ public class ExperimentRunner : MonoBehaviour
     private void PreTrial()
     {
         UpdateTrialDetails();
-        ImageLoader.LoadImage(); //MAKE METHOD //load fixation 
+        
+        trialImages = ImageLoader.LoadTrialImages(subjI, trialNum); //INITIALIZE 
 
         CameraBias.NullCameraBias(true);  //?
 
@@ -42,32 +43,68 @@ public class ExperimentRunner : MonoBehaviour
             playerReady = true;
         }
 
-        if(!playerFixating)
+        if(!playerReady)
         {
             playerFixating = 0f;
             return;
         }
        
-        if(playerFixating < 0.5f)
+        if(playerFixating < 1f) //player has to fixate for 1 s to start the trial 
         {
             playerFixating += Time.deltaTime; 
             return;
         }
 
         //CameraBias.NullCameraBias();
-        CameraBias.SetBias(currentTrialType,currentTrialSign,currentTrialIncrement);
+        CameraBias.SetBias(currentTrialType,currentTrialSign,currentTrialIncrement); //?
         //CameraBias.NullCameraBias(false);
-        ImageLoader.LoadImage(currentTrialEnvironment);
         DataWriter.Open();
-        trialState = "Trial";
+        trialState = "Trial"; //advancing to the next state, start the trial
         Debug.Log("Trial #" + currentTrial.ToString() + ": " + currentTrialType + "_" + currentTrialSign + "_" + currentTrialIncrement + ", " + currentTrialEnvironment);
     }
 
     private void Trial()
     {
-        DataWriter.WriteData();
+        StartCoroutine(SequenceTrial());
     }
 
+    private IEnumerator SequenceTrial()
+    {        
+        // Show first image
+        trialImages[0].SetActive(true);
+        yield return new WaitForSeconds(0.2f); // Wait for 200 ms
+        trialImages[0].SetActive(false);
+        
+        yield return new WaitForSeconds(0.15f); // Wait for 150 ms inter-trial-interval
+
+        // Show second image
+        trialImages[1].SetActive(true);
+        yield return new WaitForSeconds(0.2f); // Wait for 200 ms
+        trialImages[1].SetActive(false);
+
+        yield return new WaitForSeconds(0.15f); // Wait for 150 ms inter-trial-interval
+
+        // Show third image
+        trialImages[2].SetActive(true);
+        yield return new WaitForSeconds(0.2f); // Wait for 200 ms
+        trialImages[2].SetActive(false);
+
+        // After showing all images, proceed to get the response
+        PromptForResponse();
+        
+        // Record response
+        DataWriter.WriteData(); 
+    }
+
+    private void PromptForResponse()
+    {
+        // Code to prompt the user for a response
+    }
+
+    
+    
+    
+    
 
     // Start is called before the first frame update
     void Start()
