@@ -3,12 +3,12 @@ using UnityEngine;
 public static class ImageLoader
 {
     public string subjI;
-    public string trialNum;
+    public string currentTrial;
 
-    public static GameObject[] LoadTrialImages(string aSubjI, int aTrialNum)
+    public static GameObject[] LoadTrialImages(string aSubjI, int aCurrentTrial)
     {
         subjI = aSubjI;
-        aTrialNum = aTrialNum;
+        currentTrial = aCurrentTrial;
 
         GameObject[] trialImages = new GameObject[3]; //3 = number of images presented in a trial
 

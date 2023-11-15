@@ -5,9 +5,12 @@ using UnityEngine;
 public class ExperimentRunner : MonoBehaviour
 {
     
-    // Define some objects and variables 
+    public static string subjI, currentTrialType, currentTrialSign, currentTrialIncrement, currentTrialEnvironment;
+    public static float timeFixating = 0;
+    public static int currenTrial = 0;
+    public static bool debugEnabled, isExperiment, isWriting, playerReady, playerFixating;
     public GameObject fixationCross; //CREATE IN UNITY
-    public Text responsePrompt; // CREATE IN Unity UI
+    public Text responsePrompt; // CREATE IN UNITY UI
 
     private void Init()
     {
@@ -31,7 +34,7 @@ public class ExperimentRunner : MonoBehaviour
     {
         UpdateTrialDetails();
         
-        trialImages = ImageLoader.LoadTrialImages(subjI, trialNum); //INITIALIZE 
+        trialImages = ImageLoader.LoadTrialImages(subjI, currentTrial); //INITIALIZE 
 
         CameraBias.NullCameraBias(true);  //?
 
@@ -65,7 +68,9 @@ public class ExperimentRunner : MonoBehaviour
         //CameraBias.NullCameraBias();
         CameraBias.SetBias(currentTrialType,currentTrialSign,currentTrialIncrement); //?
         //CameraBias.NullCameraBias(false);
+       
         DataWriter.Open();
+       
         //advancing to the next state, start the trial
         trialState = "Trial"; 
         Debug.Log("Trial #" + currentTrial.ToString() + ": " + currentTrialType + "_" + currentTrialSign + "_" + currentTrialIncrement + ", " + currentTrialEnvironment);
@@ -83,24 +88,24 @@ public class ExperimentRunner : MonoBehaviour
         yield return new WaitForSeconds(0.2f); // Wait for 200 ms
         trialImages[0].SetActive(false);
         
-        yield return new WaitForSeconds(0.15f); // Wait for 150 ms inter-trial-interval
+        yield return new WaitForSeconds(0.15f); // Wait for 150 ms ITI
 
         // Show second image
         trialImages[1].SetActive(true);
-        yield return new WaitForSeconds(0.2f); // Wait for 200 ms
+        yield return new WaitForSeconds(0.2f); 
         trialImages[1].SetActive(false);
 
-        yield return new WaitForSeconds(0.15f); // Wait for 150 ms inter-trial-interval
+        yield return new WaitForSeconds(0.15f); 
 
         // Show third image
         trialImages[2].SetActive(true);
-        yield return new WaitForSeconds(0.2f); // Wait for 200 ms
+        yield return new WaitForSeconds(0.2f); 
         trialImages[2].SetActive(false);
 
          // Hide fixation cross
         fixationCross.SetActive(false); 
 
-        yield return new WaitForSeconds(0.15f); // Wait for 150 ms inter-trial-interval
+        yield return new WaitForSeconds(0.15f); 
 
         // After showing all images, proceed to get the response
         PromptForResponse();
